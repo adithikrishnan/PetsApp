@@ -1,2 +1,2 @@
 # PetsApp
-A simple app to manage data of pets at an animal shelter
+A simple Android application to manage data of pets at an animal shelter
