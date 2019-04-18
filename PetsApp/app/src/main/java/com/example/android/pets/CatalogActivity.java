@@ -53,6 +53,12 @@ public class CatalogActivity extends AppCompatActivity {
         displayDatabaseInfo();
     }
     
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabaseInfo();
+    }
+    
     private void displayDatabaseInfo() {
         PetDbHelper mDbHelper = new PetDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
