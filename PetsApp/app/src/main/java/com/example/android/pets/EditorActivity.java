@@ -18,7 +18,8 @@ import android.widget.Toast;
 /**
  * Allows user to create a new pet or edit an existing one.
  */
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursorr> { 
+    getLoaderManager.initLoader(EXISTING_PET_LOADER, null, this);
 
     /** EditText field to enter the pet's name */
     private EditText mNameEditText;
@@ -38,6 +39,14 @@ public class EditorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+        
+        Intent intent = getIntent();
+        Uri currentPetUri = intent.getData();
+        
+        if(currentPetUri == null)
+            setTitle("Add a pet");
+        else
+            setTitle(getString(R.string.editor_activity_title_editor_pet);
 
         // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.edit_pet_name);
@@ -85,6 +94,50 @@ public class EditorActivity extends AppCompatActivity {
                 mGender = PetEntry.GENDER_UNKNOWN; // Unknown
             }
         });
+        
+        private Uri mCurrentPetUri;
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            String[] projection = {
+                PetEntry._ID,
+                PetEntry.COLUMN_PET_NAME,
+                PetEntry.COLUMN_PET_BREED,
+                PetEntry.COLUMN_PET_GENDER,
+                PetEntry.COLUMN_PET_WEIGHT };
+            return new CursorLoader(this,   // Parent activity context
+                mCurrentPetUri,         // Query the content URI for the current pet
+                projection,             // Columns to include in the resulting Cursor
+                null,                   // No selection clause
+                null,                   // No selection arguments
+                null);                  // Default sort order
+        }
+        if (cursor.moveToFirst()) {
+        
+        int nameColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME);
+        int breedColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED);
+        int genderColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
+        int weightColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT);
+
+        
+        String name = cursor.getString(nameColumnIndex);
+        String breed = cursor.getString(breedColumnIndex);
+        int gender = cursor.getInt(genderColumnIndex);
+        int weight = cursor.getInt(weightColumnIndex);
+            
+        mNameEditText.setText(name);
+        mBreedEditText.setText(breed);
+        mWeightEditText.setText(Integer.toString(weight));
+        switch (gender) {
+            case PetEntry.GENDER_MALE:
+                mGenderSpinner.setSelection(1);
+                break;
+            case PetEntry.GENDER_FEMALE:
+                mGenderSpinner.setSelection(2);
+                break;
+            default:
+                mGenderSpinner.setSelection(0);
+                break;
+        }
     }
     
     private void insertPet() {
