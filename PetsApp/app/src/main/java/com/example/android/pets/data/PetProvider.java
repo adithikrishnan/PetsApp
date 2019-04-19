@@ -43,7 +43,7 @@ public class PetProvider extends ContentProvider{
         cursor = db.query(PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
         break;
       default:
-        throw new IllegalArgumentsException("Cannot query unknown URI : " + uri);
+        throw new IllegalArgumentException("Cannot query unknown URI : " + uri);
     }
     return cursor;
   }
@@ -61,7 +61,7 @@ public class PetProvider extends ContentProvider{
         return insertPet(uri, contentValues);
         bresk;
       default:
-        throw new IllegalArgumentsException("Insertion is not supported for " + uri);
+        throw new IllegalArgumentException("Insertion is not supported for " + uri);
     }
   }
   
