@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import com.example.android.pets.data.PetContract;
+import android.database.sqlite.SQLiteDatabase;
 
 public class PetProvider extends ContentProvider{
   private PetDbHelper mDbHelper;
@@ -25,8 +26,23 @@ public class PetProvider extends ContentProvider{
   }
   
   @Override
-  public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
-    return null;
+  public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    SQLiteDatabase db = mDbHelper.getReadableDatabase();
+    Cursor cursor;
+    int match = sUriMatcher.match(uri);
+    switch(match){
+      case PETS:
+        cursor=db.query(PetEntry.TABLE_NAME, projection, selection, selectionArgsUpdate, null, null, sortOrder);
+        break;
+      case PET_ID:
+        selection = PetEntry._ID + "=?";
+        selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri)) };
+        cursor = db.query(PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+        break;
+      default:
+        throw new IllegalArgumentsException("Cannot query unknown URI : " + uri);
+    }
+    return cursor;
   }
   
   @Override
