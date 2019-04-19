@@ -45,8 +45,6 @@ public class CatalogActivity extends AppCompatActivity {
     }
     
     private void displayDatabaseInfo() {
-        PetDbHelper mDbHelper = new PetDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         
         String[] projection = {
             PetEntry._ID,
@@ -56,7 +54,7 @@ public class CatalogActivity extends AppCompatActivity {
             PetEntry.COLUMN_PET_WEIGHT
         };
         
-        Cursor cursor = db.query(PetEntry.TABLE_NAME, projection, null,null,null,null,null);
+        Cursor cursor = getContentResolver().query(PetEntry.CONTENT_URI, projection, null, null, null);
         TextView displayView = (TextView) findViewById(R.id.text_view_pet);
         try {
             
