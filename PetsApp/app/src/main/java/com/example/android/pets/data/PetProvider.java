@@ -90,7 +90,43 @@ public class PetProvider extends ContentProvider{
   }
   
   @Override
-  public int update(Uri uri, ContentValues contentValues, String s, String[] strings){
+  public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs){
+    final int match = sUriMatcher.match(uri);
+    switch(match){
+      case PETS:
+        return updatePet(uri, contentValues, selection, selectionArgs);
+        break;
+      case PET_ID:
+        selection = PetEntry.ID + "=?";
+        selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri)) };
+        return updatePet(uri, contentValues, selection, selectionArgs);
+        break;
+      default:
+        throw new IllegalArgumentExcpetion("Update is not supported for : " + uri);
+    }
+  }
+  
+  private int updatePet(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs{
+    if (contentValues.containsKey(PetEntry.COLUMN_PET_NAME)){
+      String name = contentValues.getAsString(PetEntry.COLUMN_PET_NAME);
+      if (name == null)
+        throw new IllegalArgumentException("Pet requires a name");
+    }
+    if (contentValues.containsKey(PetEntry.COLUMN_PET_GENDER)){
+      int gender = contentValues.getAsInteger(PetEntry.COLUMN_PET_GENDER);
+      if (gender == null || !PetEntry.isValidGender(gender))
+        throw new IllegalArgumentException("Pet requires valid gender");
+    }
+    if (contentValues.containsKey(PetEntry.COLUMN_PET_WEIGHT)){
+      int weight = contentValues.getAsInteger(PetEntry.COLUMN_PET_WEIGHT);
+      if (weight != null && weight < 0)
+        throw new IllegalArgumentException("Pet requires valid weight");
+    }
+    if (values.size() == 0) {
     return 0;
+    }
+    
+    SQLiteDatabase database = mDbHelper.getWritableDatabase();
+    return database.update(PetEntry.TABLE_NAME, values, selection, selectionArgs);
   }
 }
