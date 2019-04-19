@@ -13,9 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import com.example.android.pets.data.PetContract.PetEntry;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
-import com.example.android.pets.data.PetDbHelper;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -94,20 +92,18 @@ public class EditorActivity extends AppCompatActivity {
         String breedString = mBreedEditText.getText().toString().trim();
         int weight = Integer.parseInt(mWeightEditText.getText().toString().trim(););
         
-        PetDbHelper mDbHelper = new PetDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(PetEntry.COLUMN_PET_NAME, nameString);
         values.put(PetEntry.COLUMN_PET_BREED, breedString);
         values.put(PetEntry.COLUMN_PET_GENDER, mGender);
         values.put(PetEntry.COLUMN_PET_WEIGHT, weight);
         
-        long newRowId = db.insert(PetEntry.TABLE_NAME, null, values);
+        Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI, values);
         
-        if (newRowId == -1)
-            Toast.makeText(this, "Error in saving pet info!", Toast.LENGTH_SHORT).show();
+        if (newUri == null)
+            Toast.makeText(this, getString(R.string.editor_,insert_pet_failed), Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(this, "Pet saved with id : " + newRowId, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.editor_insert_pet_successful), Toast.LENGTH_SHORT).show();
     }
 
     @Override
