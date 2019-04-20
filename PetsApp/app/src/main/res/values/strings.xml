@@ -66,4 +66,8 @@
     <!-- Text for empty list view -->
     <string name="empty_view_title_text">It\'s a bit lonely here...</string>
     <string name="empty_view_subtitle_text">Get started by adding a pet</string>
+     
+    <!-- Text for toast message to display result of updating pet in table --> 
+    <string name="editor_update_pet_failed">Error with updating pet</string>
+    <string name="editor_update_pet_successful">Pet Updated</string>
 </resources>
