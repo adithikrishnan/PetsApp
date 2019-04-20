@@ -52,11 +52,7 @@ public class EditorActivity extends AppCompatActivity implements
 
     /** Boolean flag that keeps track of whether the pet has been edited (true) or not (false) */
     private boolean mPetHasChanged = false;
-
-    /**
-     * OnTouchListener that listens for any user touches on a View, implying that they are modifying
-     * the view, and we change the mPetHasChanged boolean to true.
-     */
+        
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -70,22 +66,14 @@ public class EditorActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        // Examine the intent that was used to launch this activity,
-        // in order to figure out if we're creating a new pet or editing an existing one.
         Intent intent = getIntent();
         mCurrentPetUri = intent.getData();
-
-        // If the intent DOES NOT contain a pet content URI, then we know that we are
-        // creating a new pet.
         if (mCurrentPetUri == null) {
-            // This is a new pet, so change the app bar to say "Add a Pet"
             setTitle(getString(R.string.editor_activity_title_new_pet));
+            invalidateOptionsMenu();
         } else {
-            // Otherwise this is an existing pet, so change app bar to say "Edit Pet"
             setTitle(getString(R.string.editor_activity_title_edit_pet));
-
-            // Initialize a loader to read the pet data from the database
-            // and display the current values in the editor
+           
             getLoaderManager().initLoader(EXISTING_PET_LOADER, null, this);
         }
 
@@ -95,10 +83,7 @@ public class EditorActivity extends AppCompatActivity implements
         mWeightEditText = (EditText) findViewById(R.id.edit_pet_weight);
         mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
 
-        // Setup OnTouchListeners on all the input fields, so we can determine if the user
-        // has touched or modified them. This will let us know if there are unsaved changes
-        // or not, if the user tries to leave the editor without saving.
-        mNameEditText.setOnTouchListener(mTouchListener);
+        // Setup OnTouchListeners on all the input fields
         mBreedEditText.setOnTouchListener(mTouchListener);
         mWeightEditText.setOnTouchListener(mTouchListener);
         mGenderSpinner.setOnTouchListener(mTouchListener);
@@ -106,9 +91,6 @@ public class EditorActivity extends AppCompatActivity implements
         setupSpinner();
     }
 
-    /**
-     * Setup the dropdown spinner that allows the user to select the gender of the pet.
-     */
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
@@ -117,11 +99,7 @@ public class EditorActivity extends AppCompatActivity implements
 
         // Specify dropdown layout style - simple list view with 1 item per line
         genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-
-        // Apply the adapter to the spinner
         mGenderSpinner.setAdapter(genderSpinnerAdapter);
-
-        // Set the integer mSelected to the constant values
         mGenderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -216,6 +194,17 @@ public class EditorActivity extends AppCompatActivity implements
         // Inflate the menu options from the res/menu/menu_editor.xml file.
         // This adds menu items to the app bar.
         getMenuInflater().inflate(R.menu.menu_editor, menu);
+        return true;
+    }
+        
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        if (mCurrentPetUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
         return true;
     }
 
