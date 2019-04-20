@@ -217,7 +217,7 @@ public class EditorActivity extends AppCompatActivity implements
                 finish();
                 return true;
             case R.id.action_delete:
-                // Do nothing for now
+                showDeleteConfirmationDialog();
                 return true;
             case android.R.id.home:
                 if (!mPetHasChanged) {
@@ -378,6 +378,13 @@ public class EditorActivity extends AppCompatActivity implements
         alertDialog.show();
     }
     private void deletePet() {
-    
+            if(mCurrentPetUri != null) {
+                    int rowsDeleted = getContentResolver().delete(mCurrentPetUri, null, null);
+                    if( rowsDeleted == 0)
+                            Toast.makeText(this, getString(R.string.editor_delete_pet_failed), Toast.LENGTH_SHORT).show();
+                    else
+                            Toast.makeText(this, getString(R.string.editor_delete_pet_successful), Toast.LENGTH_SHORT).show();
+                    finish();
+            }
     }
 }
