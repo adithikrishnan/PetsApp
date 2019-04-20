@@ -141,6 +141,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
     
     private void savePet() {
+        
+        if (mCurrentPetUri == null &&
+         TextUtils.isEmpty(nameString) && TextUtils.isEmpty(breedString) &&
+         TextUtils.isEmpty(weightString) && mGender == PetEntry.GENDER_UNKNOWN) {return;}
+        
         Intent intent = getIntent();
         Uri currentPetUri = intent.getData();
         
@@ -153,6 +158,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             values.put(PetEntry.COLUMN_PET_NAME, nameString);
             values.put(PetEntry.COLUMN_PET_BREED, breedString);
             values.put(PetEntry.COLUMN_PET_GENDER, mGender);
+            int weight = 0;
+            if (!TextUtils.isEmpty(weightString)) {
+                weight = Integer.parseInt(weightString);
+            }
             values.put(PetEntry.COLUMN_PET_WEIGHT, weight);
         
             Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI, values);
